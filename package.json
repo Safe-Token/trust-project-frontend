@@ -1,0 +1,11 @@
+{
+    "name": "trust-project-frontend",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "http-server": "^14.1.1"
+    },
+    "scripts": {
+        "start": "cd src && http-server -c-1 -o pages/index/index.html"
+    }
+}

@@ -1,0 +1,130 @@
+body {
+    background-color: #f2f2f2;
+    font-family: 'Roboto', sans-serif;
+}
+
+.main_title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 1em;
+}
+
+.main_title>h1 {
+    color: #0072c6;
+    margin-bottom: 0;
+}
+
+.main_title>span {
+    color: black;
+    text-align: center;
+}
+
+.create_button{
+    margin-top: 1em!important;
+}
+
+.project_creation_form {
+    max-width: 30%;
+    margin: auto;
+    background-color: #ffffff;
+    padding: 3em;
+    padding-top: 1em;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.payment_form {
+    display: flex;
+    align-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3em;
+}
+
+
+.subtitle {
+    font-size: large;
+    font-weight: 100;
+}
+
+button {
+    background-color: #0072c6 !important;
+}
+
+.visible {
+    visibility: visible !important;
+}
+
+.user_switch_main {
+    margin-top: 2em;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+.user_switch_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user_switch_container:first {
+    margin-left: 0 !important;
+}
+
+.mdl-switch.is-checked .mdl-switch__track {
+    background: #4caf4fab !important;
+}
+
+.mdl-switch.is-checked .mdl-switch__thumb {
+    background: #4CAF50 !important;
+}
+
+.mdl-switch .mdl-switch__track {
+    background: #0073c6c0 !important;
+}
+
+.mdl-switch .mdl-switch__thumb {
+    background: #0072c6 !important;
+}
+
+
+.switch_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+.switch_label {
+    color: #444;
+}
+
+.main_input_container {
+    display: flex;
+    align-items: center;
+}
+
+.add_address_button {
+    margin-left: 1em !important;
+    position: absolute !important;
+    right: 30%;
+}
+
+@media (max-width: 1900px) and (min-width: 1257px) {
+    .add_address_button {
+        right: 20%;
+    }
+}
+
+@media (max-width: 1256px){
+    .add_address_button {
+        right: 7%;
+    }
+}
