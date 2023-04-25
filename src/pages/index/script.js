@@ -26,7 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const provider = new ethers.BrowserProvider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
 
-        const factory = new ethers.ContractFactory(TrustedProjectData.abi, TrustedProjectData.bytecode, await provider.getSigner());
+        const factory = new ethers.ContractFactory(
+            TrustedProjectData.abi,
+            TrustedProjectData.bytecode,
+            await provider.getSigner(),
+        );
 
         const customerAddress = document.getElementById("customer-address").value;
         const creatorAddress = document.getElementById("creator-address").value;
@@ -35,13 +39,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const trustedProject = await factory.deploy(customerAddress, creatorAddress);
-        await trustedProject.deployed();
+        try{
+            const trustedProject = await factory.deploy(customerAddress, creatorAddress);
+            const transaction = trustedProject.deploymentTransaction();
+            await transaction.wait();
 
-        console.log(trustedProject);
-        console.log(trustedProject.address);
+            window.location.href = `/project/?address=${trustedProject.target}`;
+        }catch(error){
+            alert(error);
+        }
     });
-
 
     const switchElement = document.getElementById("user_type_switch");
 
@@ -60,16 +67,28 @@ document.addEventListener("DOMContentLoaded", () => {
         mainInput.remove();
     });
 
-    document.getElementsByClassName("add_address_button")[0].addEventListener("click", async (event) => {
-        event.preventDefault();
-        const button = event.target.parentElement;
-        const addressInput = button.previousElementSibling.querySelector("input");
-
-        if (window.ethereum) {
-            const provider = new ethers.BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            addressInput.value = signer.address;
+    async function createWallet(){
+        if(!window.ethereum){
+            return;
         }
+
+        const element = document.querySelector(".current_wallet_address");
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const signer = await provider.getSigner();
+
+        if(element.walletConnected){
+            document.querySelector(".main_input_container input").value = signer.address;
+        } else {
+            element.innerText = `${signer.address.slice(0, 9)}...`;
+            element.walletConnected = true;
+        }
+    }
+
+    document.querySelector(".current_wallet_address").addEventListener("click", (event) => {
+        event.preventDefault();
+        createWallet();
     });
 
+    createWallet();
 });

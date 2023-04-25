@@ -15,8 +15,8 @@
         <span>Secure Crypto Payments for Goods and Services</span>
     </div>
 
-    <div class="payment_form">
-        <form class="project_creation_form">
+    <div class="centered_card">
+        <form class="card">
             <span class="subtitle" style="font-weight: 600">Create your first Trusted Project!</span>
             <span class="subtitle">Are you a creator or a customer?</span>
 
@@ -42,7 +42,8 @@
             <div class="input_container">
                 <div class="main_input_container">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label customer_input">
-                        <input class="mdl-textfield__input address_input" type="text" id="customer-address" name="customer-address" />
+                        <input class="mdl-textfield__input address_input" type="text" id="customer-address"
+                            name="customer-address" />
                         <span class="mdl-textfield__error">
                             Invalid address format.
                             <a href="https://support.metamask.io/hc/en-us/articles/360015488791-How-to-view-your-account-details-and-public-address"
@@ -50,14 +51,11 @@
                         </span>
                         <label class="mdl-textfield__label" for="customer-address">Customer's wallet address</label>
                     </div>
-
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-button--outlined add_address_button">
-                        Add current address
-                    </button>
                 </div>
 
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label creator_input">
-                    <input class="mdl-textfield__input address_input" type="text" id="creator-address" name="creator-address" />
+                    <input class="mdl-textfield__input address_input" type="text" id="creator-address"
+                        name="creator-address" />
                     <span class="mdl-textfield__error">
                         Invalid address format.
                         <a href="https://support.metamask.io/hc/en-us/articles/360015488791-How-to-view-your-account-details-and-public-address"
@@ -67,8 +65,14 @@
                 </div>
             </div>
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored create_button">Create now!</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored create_button">Create
+                now!</button>
         </form>
+
+        <div class="container_wallet">
+            <span>Current ETH Wallet Address:</span>
+            <span class="current_wallet_address">Connect wallet</span>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.3.0/ethers.umd.min.js"
