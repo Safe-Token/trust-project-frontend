@@ -1,23 +1,6 @@
-import TrustedProjectData from "../../abis/TrustedProject.json" assert { type: "json" };
-
-
-let client = null;
-
-async function createIPFSClient() {
-    if (client !== null) {
-        return client;
-    }
-
-    client = Ipfs.create({ host: 'https://ipfs.infura.io', port: 5001, protocol: 'https' });
-    return client;
-}
-
-
-async function uploadIPFS(file) {
-    const ipfs = await createIPFSClient();
-    const result = await ipfs.add(file, { pin: true });
-    return result.path;
-}
+import { createIPFSClient, uploadIPFS } from "../../scripts/ipfs";
+import { getWallet } from "../../scripts/getWallet";
+import { getTrustedProject } from "../../scripts/trustedProject";
 
 
 async function getUploadedFiles(trustedProject) {
@@ -25,24 +8,36 @@ async function getUploadedFiles(trustedProject) {
     const projectLinks = await trustedProject.getProjectLinks();
     const ipfs = await createIPFSClient();
 
-    for (const file of projectLinks) {
-        let content = [];
+    for (let file of projectLinks) {
+        let ipfsHash;
 
-        for await (const chunk of ipfs.cat(file)) {
-            content += chunk;
+        try {
+            file = JSON.parse(file);
+        } catch (error) {
         }
 
-        content = Uint8Array.from(content);
-        const uploadedFile = new Blob([content], { type: 'application/octet-stream' });
-        const link = document.createElement('a');
+        if (file.type === "ipfs") {
+            let content = await ipfs.cat(file.hash);
 
-        link.href = URL.createObjectURL(uploadedFile);
-        link.innerText = `Download ${file.slice(5)}...`;
-        link.download = file;
+            const uploadedFile = new Blob([content], { type: "application/octet-stream" });
+            const link = document.createElement('a');
 
-        uploadedFiles.appendChild(link);
+            link.href = URL.createObjectURL(uploadedFile);
+            link.innerText = `Download ${file.name}...`;
+            link.download = file.name;
+
+            uploadedFiles.appendChild(link);
+        }
+
     }
 
+}
+
+async function updateTotalPayment() {
+    const totalPayment = await trustedProject.getPayment();
+    for (const element of document.querySelectorAll(".total_payment")) {
+        element.innerHTML = `${ethers.formatEther(totalPayment)} ETH`;
+    }
 }
 
 
@@ -54,11 +49,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.pathname = `/`;
     }
 
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = await provider.getSigner();
-
-    const trustedProject = new ethers.Contract(address, TrustedProjectData.abi, signer);
+    const signer = await getWallet();
+    const trustedProject = getTrustedProject(address, signer);
     let customer;
 
     try {
@@ -70,13 +62,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const isCustomer = customer.toLowerCase() === signer.address.toLowerCase();
     await getUploadedFiles(trustedProject);
-
-    async function updateTotalPayment() {
-        const totalPayment = await trustedProject.getPayment();
-        for (const element of document.querySelectorAll(".total_payment")) {
-            element.innerHTML = `${ethers.formatEther(totalPayment)} ETH`;
-        }
-    }
 
     updateTotalPayment();
 
@@ -96,10 +81,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         for (const file of event.target.files) {
             const uploadedHash = await uploadIPFS(file);
-            uploadedHashes.push(uploadedHash);
+            uploadedHashes.push(JSON.stringify(uploadedHash));
         }
 
-        const transaction = await trustedProject.uploadProject(uploadedHashes, true);
+        const estimateGas = await trustedProject.uploadProject.estimateGas(uploadedHashes, true);
+        const transaction = await trustedProject.uploadProject(uploadedHashes, true, { gasLimit: estimateGas });
         await transaction.wait();
     });
 

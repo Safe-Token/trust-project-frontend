@@ -23,14 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     createButton.addEventListener("click", async (event) => {
         event.preventDefault();
 
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-
-        const factory = new ethers.ContractFactory(
-            TrustedProjectData.abi,
-            TrustedProjectData.bytecode,
-            await provider.getSigner(),
-        );
+        const signer = await getWallet();
+        const factory = new ethers.ContractFactory(TrustedProjectData.abi, TrustedProjectData.bytecode, signer);
 
         const customerAddress = document.getElementById("customer-address").value;
         const creatorAddress = document.getElementById("creator-address").value;
@@ -73,9 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const element = document.querySelector(".current_wallet_address");
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        const signer = await provider.getSigner();
+        const signer = await getWallet();
 
         if(element.walletConnected){
             document.querySelector(".main_input_container input").value = signer.address;
