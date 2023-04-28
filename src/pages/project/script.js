@@ -1,6 +1,7 @@
-import { createIPFSClient, uploadIPFS } from "../../scripts/ipfs";
-import { getWallet } from "../../scripts/getWallet";
-import { getTrustedProject } from "../../scripts/trustedProject";
+import { createIPFSClient, uploadIPFS } from "../../scripts/ipfs.js";
+import { getWallet } from "../../scripts/getWallet.js";
+import { getTrustedProject, getUser } from "../../scripts/trustedProject.js";
+import { CreatorSatisfiedEvent } from "./events.js";
 
 
 async function getUploadedFiles(trustedProject) {
@@ -13,8 +14,7 @@ async function getUploadedFiles(trustedProject) {
 
         try {
             file = JSON.parse(file);
-        } catch (error) {
-        }
+        } catch (error) { }
 
         if (file.type === "ipfs") {
             let content = await ipfs.cat(file.hash);
@@ -33,45 +33,32 @@ async function getUploadedFiles(trustedProject) {
 
 }
 
-async function updateTotalPayment() {
+async function updateTotalPayment(trustedProject) {
     const totalPayment = await trustedProject.getPayment();
     for (const element of document.querySelectorAll(".total_payment")) {
         element.innerHTML = `${ethers.formatEther(totalPayment)} ETH`;
     }
 }
 
+async function releasePayment(trustedProject) {
+    const transaction = await trustedProject.completeProject();
+    await transaction.wait();
+}
 
-document.addEventListener("DOMContentLoaded", async () => {
-    const address = window.location.search.replace("?address=", "");
+async function updateProjectState(trustedProject) {
+    const creator = getUser(await trustedProject.creator());
+    const isCreatorSatisfied = await creator.isSatisfied();
+    console.log(isCreatorSatisfied);
 
-    if (!ethers.isAddress(address)) {
-        window.location.search = "";
-        window.location.pathname = `/`;
+    if (isCreatorSatisfied) {
+        window.dispatchEvent(new CreatorSatisfiedEvent());
+        await getUploadedFiles(trustedProject);
     }
 
-    const signer = await getWallet();
-    const trustedProject = getTrustedProject(address, signer);
-    let customer;
+    await updateTotalPayment(trustedProject);
+}
 
-    try {
-        customer = await trustedProject.customer();
-    } catch (error) {
-        window.location.search = "";
-        window.location.replace("/");
-    }
-
-    const isCustomer = customer.toLowerCase() === signer.address.toLowerCase();
-    await getUploadedFiles(trustedProject);
-
-    updateTotalPayment();
-
-    document.querySelector(".add_payment").addEventListener("click", async () => {
-        const paymentValue = document.querySelector("#payment_amount").value;
-        const transaction = await trustedProject.addPayment({ value: ethers.parseEther(paymentValue) });
-        await transaction.wait();
-        await updateTotalPayment();
-    });
-
+function createCreatorPage(trustedProject) {
     document.querySelector(".uploadIPFS").addEventListener("click", () => {
         document.querySelector(".file_upload").click();
     });
@@ -107,10 +94,62 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const creatorContainer = document.querySelector(".creator_container");
+        const creatorContainer = document.querySelector(".creatorContainer");
         creatorContainer.style.filter = "none";
         creatorContainer.style.pointerEvents = "auto";
         document.querySelector(".correct_amount_container").parentElement.remove();
+    });
+}
+
+
+function createCustomerPage(trustedProject){
+    document.querySelector(".add_payment").addEventListener("click", async () => {
+        const paymentValue = document.querySelector("#payment_amount").value;
+        const transaction = await trustedProject.addPayment({ value: ethers.parseEther(paymentValue) });
+        await transaction.wait();
+        await updateTotalPayment();
+    });
+
+    document.querySelector(".release_payment").addEventListener('click', async () => {
+        await releasePayment(trustedProject);
+    });
+}
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const address = window.location.search.replace("?address=", "");
+
+    if (!ethers.isAddress(address)) {
+        window.location.search = "";
+        window.location.pathname = `/`;
+    }
+
+    const signer = await getWallet();
+    const trustedProject = getTrustedProject(address, signer);
+    let customer;
+
+    try {
+        customer = await trustedProject.customer();
+    } catch (error) {
+        window.location.search = "";
+        window.location.replace("/");
+    }
+
+    const isCustomer = customer.toLowerCase() === signer.address.toLowerCase();
+
+    if (isCustomer) {
+        createCustomerPage(trustedProject);
+        document.querySelector(".creatorContainer").style.display = "none";
+    } else {
+        createCreatorPage(trustedProject);
+        document.querySelector(".customerContainer").style.display = "none";
+    }
+
+    setInterval(3000, () => { updateProjectState(trustedProject); });
+
+    document.addEventListener((new CreatorSatisfiedEvent()).type, () => {
+        document.querySelector("#customerPaymentRelease").style.display = "inherit";
+        document.querySelector("#customerPaymentUpload").style.display = "none";
     });
 
 });

@@ -4,7 +4,7 @@
 
 .upload_container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     flex-direction: row;
 }
@@ -62,7 +62,7 @@
     bottom: 0px;
 }
 
-.creator_container {
+.creatorContainer {
     filter: blur(8px);
     pointer-events: none;
 }

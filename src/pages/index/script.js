@@ -1,4 +1,5 @@
 import TrustedProjectData from "../../abis/TrustedProject.json" assert { type: "json" };
+import { getWallet } from "../../scripts/getWallet.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {

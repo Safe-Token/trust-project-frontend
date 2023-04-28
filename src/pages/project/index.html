@@ -19,7 +19,7 @@
     </div>
 
     <div class="customerContainer">
-        <div class="centered_card card" style="display: none">
+        <div id="customerPaymentUpload" class="centered_card card">
             <h5>Total Payment: <span class="total_payment">0 ETH</span></h5>
             <span class="subtitle">Now, add the payment that you agreed upon.</span>
 
@@ -29,79 +29,84 @@
                 <span class="mdl-textfield__error">Input is not a number!</span>
             </div>
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored add_payment">Add payment</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored add_payment">Add
+                payment</button>
         </div>
 
-        <div class="card">
-            <h5>Check the project files the customer uploaded</h5>
-
-            <div class="uploadedFiles">
-
-            </div>
-
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored add_payment">Release payment</button>
+        <div id="customerPaymentRelease" class="card" style="display: none">
+            <h5 style="text-align: center">Check the project files the customer uploaded</h5>
+            <div class="uploadedFiles"></div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored release_payment">
+                Release payment
+            </button>
         </div>
     </div>
 
     <div class="centered_card card">
-        <h5></h5>
-        <span class="subtitle" style="text-align: center;">
-            Now, wait for the customer to send the payment to the contract.
-            When the correct amount is there, you can upload your work.
-        </span>
-
         <div>
-            <h3>Total payment: <span class="total_payment">0 ETH</span></h3>
-        </div>
+            <h5></h5>
+            <span class="subtitle" style="text-align: center;">
+                Now, wait for the customer to send the payment to the contract.
+                When the correct amount is there, you can upload your work.
+            </span>
 
-        <div style="font-weight: 600">
-            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect correct_amount_container" for="correct_amount_checkbox">
-                <input type="checkbox" id="correct_amount_checkbox" class="mdl-checkbox__input" />
-                <span class="mdl-checkbox__label" style="font-size: 1.4em; text-decoration: underline;">The app has received full and correct payment</span>
-            </label>
-        </div>
-
-        <div class="creator_container">
-        <div class="upload_switch">
-            <div class="upload_switch_container">
-                <span class="switch-label">IPFS</span>
-                <span class="material-symbols-outlined">
-                    deployed_code
-                </span>
+            <div style="text-align: center">
+                <h3>Total payment: <span class="total_payment">0 ETH</span></h3>
             </div>
 
-            <div class="upload_switch_container">
-                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="upload_type_switch">
-                    <input type="checkbox" id="upload_type_switch" class="mdl-switch__input" />
-                    <span class="mdl-switch__label"></span>
+            <div style="font-weight: 600; text-align: center;">
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect correct_amount_container"
+                    for="correct_amount_checkbox">
+                    <input type="checkbox" id="correct_amount_checkbox" class="mdl-checkbox__input" />
+                    <span class="mdl-checkbox__label" style="font-size: 1.4em; text-decoration: underline;">
+                        The app has received full and correct payment
+                    </span>
                 </label>
             </div>
 
-            <div class="upload_switch_container">
-                <span class="material-symbols-outlined">attach_file</span>
-                <span class="switch-label">Link</span>
-            </div>
-        </div>
+            <div class="creator_container">
+                <div class="upload_switch">
+                    <div class="upload_switch_container">
+                        <span class="switch-label">IPFS</span>
+                        <span class="material-symbols-outlined">
+                            deployed_code
+                        </span>
+                    </div>
 
-        <div class="upload_container">
-            <div class="uploadIPFS">
-                <label for="file-upload" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                    Upload to IPFS
-                </label>
-                <input class="file_upload" type="file" name="file_upload" style="display: none;" multiple />
-            </div>
+                    <div class="upload_switch_container">
+                        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="upload_type_switch">
+                            <input type="checkbox" id="upload_type_switch" class="mdl-switch__input" />
+                            <span class="mdl-switch__label"></span>
+                        </label>
+                    </div>
 
-            <div class="linkInput" style="display: none">
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <div>
-                        <input class="mdl-textfield__input" type="text" id="link_input">
-                        <label class="mdl-textfield__label" for="link_input">Add link</label>
+                    <div class="upload_switch_container">
+                        <span class="material-symbols-outlined">attach_file</span>
+                        <span class="switch-label">Link</span>
                     </div>
                 </div>
 
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Add</button>
+                <div class="upload_container">
+                    <div class="uploadIPFS">
+                        <label for="file-upload"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                            Upload to IPFS
+                        </label>
+                        <input class="file_upload" type="file" name="file_upload" style="display: none;" multiple />
+                    </div>
+
+                    <div class="linkInput" style="display: none">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <div>
+                                <input class="mdl-textfield__input" type="text" id="link_input">
+                                <label class="mdl-textfield__label" for="link_input">Add link</label>
+                            </div>
+                        </div>
+
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Add</button>
+                    </div>
+                </div>
             </div>
-        </div>
         </div>
     </div>
 
