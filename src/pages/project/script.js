@@ -4,6 +4,17 @@ import { getTrustedProject, getUser } from "../../scripts/trustedProject.js";
 import { CreatorSatisfiedEvent } from "./events.js";
 
 
+function makeProgressDotActive(labelQuery){
+    const dotContainer = document.querySelector(labelQuery).parentElement;
+
+    for(const element of dotContainer.children){
+        element.classList.add('active');
+    }
+
+    dotContainer.previousElementSibling.classList.add('active');
+}
+
+
 async function getUploadedFiles(trustedProject) {
     const uploadedFiles = document.querySelector(".uploadedFiles");
     const projectLinks = await trustedProject.getProjectLinks();
@@ -35,9 +46,15 @@ async function getUploadedFiles(trustedProject) {
 
 async function updateTotalPayment(trustedProject) {
     const totalPayment = await trustedProject.getPayment();
+
     for (const element of document.querySelectorAll(".total_payment")) {
         element.innerHTML = `${ethers.formatEther(totalPayment)} ETH`;
     }
+
+    if(totalPayment == 0){
+        makeProgressDotActive(".diagramWaitPayment");
+    }
+
 }
 
 async function releasePayment(trustedProject) {
@@ -45,25 +62,31 @@ async function releasePayment(trustedProject) {
     await transaction.wait();
 }
 
-async function updateProjectState(trustedProject) {
+async function updateProjectState(trustedProject) {    
+    await updateTotalPayment(trustedProject);
+
     const creator = getUser(await trustedProject.creator());
     const isCreatorSatisfied = await creator.isSatisfied();
-    console.log(isCreatorSatisfied);
 
     if (isCreatorSatisfied) {
         window.dispatchEvent(new CreatorSatisfiedEvent());
         await getUploadedFiles(trustedProject);
     }
-
-    await updateTotalPayment(trustedProject);
 }
 
+
 function createCreatorPage(trustedProject) {
+
+    document.querySelector(".diagramWaitPayment").innerText = "Wait for the payment";
+    document.querySelector(".diagramUploadFiles").innerText = "Upload the project";
+    document.querySelector(".diagramFileCheck").innerText = "Wait for the project check";
+    document.querySelector(".diagramPaymentRelease").innerText = "The payment is released";
+
     document.querySelector(".uploadIPFS").addEventListener("click", () => {
-        document.querySelector(".file_upload").click();
+        document.querySelector(".fileUpload").click();
     });
 
-    document.querySelector(".file_upload").addEventListener("change", async (event) => {
+    document.querySelector(".fileUpload").addEventListener("change", async (event) => {
         const uploadedHashes = [];
 
         for (const file of event.target.files) {
@@ -76,7 +99,7 @@ function createCreatorPage(trustedProject) {
         await transaction.wait();
     });
 
-    document.querySelector("#upload_type_switch").addEventListener('change', (event) => {
+    document.querySelector("#uploadTypeSwitch").addEventListener('change', (event) => {
         const ipfsUpload = document.querySelector('.uploadIPFS');
         const linkInput = document.querySelector('.linkInput');
 
@@ -89,7 +112,7 @@ function createCreatorPage(trustedProject) {
         }
     });
 
-    document.querySelector('#correct_amount_checkbox').addEventListener("change", (event) => {
+    document.querySelector('#correctAmountCheckbox').addEventListener("change", (event) => {
         if (!event.target.checked) {
             return;
         }
@@ -97,20 +120,24 @@ function createCreatorPage(trustedProject) {
         const creatorContainer = document.querySelector(".creatorContainer");
         creatorContainer.style.filter = "none";
         creatorContainer.style.pointerEvents = "auto";
-        document.querySelector(".correct_amount_container").parentElement.remove();
+        document.querySelector(".correctAmountContainer").parentElement.remove();
     });
 }
 
 
 function createCustomerPage(trustedProject){
-    document.querySelector(".add_payment").addEventListener("click", async () => {
-        const paymentValue = document.querySelector("#payment_amount").value;
+    document.querySelector(".diagram_wait_payment").innerText = "Make the payment";
+    document.querySelector(".diagram_upload_files").innerText = "Wait for the project";
+    document.querySelector(".diagram_file_check").innerText = "Check the files";
+    document.querySelector(".diagram_payment_release").innerText = "Release the payment";
+
+    document.querySelector(".addPayment").addEventListener("click", async () => {
+        const paymentValue = document.querySelector("#paymentAmount").value;
         const transaction = await trustedProject.addPayment({ value: ethers.parseEther(paymentValue) });
         await transaction.wait();
-        await updateTotalPayment();
     });
 
-    document.querySelector(".release_payment").addEventListener('click', async () => {
+    document.querySelector(".releasePayment").addEventListener('click', async () => {
         await releasePayment(trustedProject);
     });
 }
@@ -136,16 +163,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     const isCustomer = customer.toLowerCase() === signer.address.toLowerCase();
+    setInterval(() => { updateProjectState(trustedProject); }, 3000);
 
     if (isCustomer) {
         createCustomerPage(trustedProject);
-        document.querySelector(".creatorContainer").style.display = "none";
+        document.querySelector(".creatorContainer").remove();
     } else {
         createCreatorPage(trustedProject);
-        document.querySelector(".customerContainer").style.display = "none";
+        document.querySelector(".customerContainer").remove();
     }
-
-    setInterval(3000, () => { updateProjectState(trustedProject); });
 
     document.addEventListener((new CreatorSatisfiedEvent()).type, () => {
         document.querySelector("#customerPaymentRelease").style.display = "inherit";

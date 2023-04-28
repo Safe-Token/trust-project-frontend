@@ -31,6 +31,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const creatorAddress = document.getElementById("creator-address").value;
 
         if (!ethers.isAddress(customerAddress) || !ethers.isAddress(creatorAddress)) {
+            alert("One of the addresses is incorrect! Please, try again.");
+            return;
+        }else if(customerAddress.toLowerCase() == creatorAddress.toLowerCase()){
+            alert("Addresses are equal! Please, take a look at our manual.");
             return;
         }
 
@@ -41,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             window.location.href = `/project/?address=${trustedProject.target}`;
         }catch(error){
-            alert(error);
+            alert("An error happened. Please, report it here: https://github.com/Safe-Token/trust-project");
         }
     });
 

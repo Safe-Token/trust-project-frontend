@@ -18,32 +18,32 @@
         <span>Secure Crypto Payments for Goods and Services</span>
     </div>
 
-    <div class="customerContainer">
-        <div id="customerPaymentUpload" class="centered_card card">
-            <h5>Total Payment: <span class="total_payment">0 ETH</span></h5>
-            <span class="subtitle">Now, add the payment that you agreed upon.</span>
+    <div class="mainRow" style="margin-top: 3em">
+        <div class="customerContainer">
+            <div id="customerPaymentUpload" class="centered_card card">
+                <h5>Total Payment: <span class="total_payment">0 ETH</span></h5>
+                <span class="subtitle">Now, add the payment that you agreed upon.</span>
 
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="payment_amount">
-                <label class="mdl-textfield__label" for="payment_amount">Payment</label>
-                <span class="mdl-textfield__error">Input is not a number!</span>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="payment_amount">
+                    <label class="mdl-textfield__label" for="payment_amount">Payment</label>
+                    <span class="mdl-textfield__error">Input is not a number!</span>
+                </div>
+
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored addPayment">Add
+                    payment</button>
             </div>
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored add_payment">Add
-                payment</button>
+            <div id="customerPaymentRelease" class="card" style="display: none">
+                <h5 style="text-align: center">Check the project files the customer uploaded</h5>
+                <div class="uploadedFiles"></div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored releasePayment">
+                    Release payment
+                </button>
+            </div>
         </div>
 
-        <div id="customerPaymentRelease" class="card" style="display: none">
-            <h5 style="text-align: center">Check the project files the customer uploaded</h5>
-            <div class="uploadedFiles"></div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored release_payment">
-                Release payment
-            </button>
-        </div>
-    </div>
-
-    <div class="centered_card card">
-        <div>
+        <div class="centered_card card">
             <h5></h5>
             <span class="subtitle" style="text-align: center;">
                 Now, wait for the customer to send the payment to the contract.
@@ -55,44 +55,43 @@
             </div>
 
             <div style="font-weight: 600; text-align: center;">
-                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect correct_amount_container"
-                    for="correct_amount_checkbox">
-                    <input type="checkbox" id="correct_amount_checkbox" class="mdl-checkbox__input" />
+                <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect correctAmountContainer"
+                    for="correctAmountCheckbox">
+                    <input type="checkbox" id="correctAmountCheckbox" class="mdl-checkbox__input" />
                     <span class="mdl-checkbox__label" style="font-size: 1.4em; text-decoration: underline;">
                         The app has received full and correct payment
                     </span>
                 </label>
             </div>
 
-            <div class="creator_container">
-                <div class="upload_switch">
-                    <div class="upload_switch_container">
+            <div class="creatorContainer">
+                <div class="uploadSwitch">
+                    <div class="uploadSwitchContainer">
                         <span class="switch-label">IPFS</span>
                         <span class="material-symbols-outlined">
                             deployed_code
                         </span>
                     </div>
 
-                    <div class="upload_switch_container">
-                        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="upload_type_switch">
-                            <input type="checkbox" id="upload_type_switch" class="mdl-switch__input" />
+                    <div class="uploadSwitchContainer">
+                        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="uploadTypeSwitch">
+                            <input type="checkbox" id="uploadTypeSwitch" class="mdl-switch__input" />
                             <span class="mdl-switch__label"></span>
                         </label>
                     </div>
 
-                    <div class="upload_switch_container">
+                    <div class="uploadSwitchContainer">
                         <span class="material-symbols-outlined">attach_file</span>
                         <span class="switch-label">Link</span>
                     </div>
                 </div>
 
-                <div class="upload_container">
+                <div class="uploadContainer">
                     <div class="uploadIPFS">
-                        <label for="file-upload"
-                            class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                            Upload to IPFS
-                        </label>
-                        <input class="file_upload" type="file" name="file_upload" style="display: none;" multiple />
+                        <label for="fileUpload"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Upload to
+                            IPFS</label>
+                        <input class="fileUpload" type="file" name="fileUpload" style="display: none;" multiple />
                     </div>
 
                     <div class="linkInput" style="display: none">
@@ -105,6 +104,45 @@
 
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Add</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card projectStateContainer">
+            <div class="subtitle">Project state</div>
+
+            <div class="diagram">
+                <div class="dot-container">
+                    <div class="dot active"></div>
+                    <div class="label active">Create the project</div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="dot-container">
+                    <div class="dot"></div>
+                    <div class="label diagramWaitPayment"></div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="dot-container">
+                    <div class="dot"></div>
+                    <div class="label diagramUploadFiles"></div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="dot-container">
+                    <div class="dot"></div>
+                    <div class="label diagramFileCheck"></div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="dot-container">
+                    <div class="dot"></div>
+                    <div class="label diagramPaymentRelease"></div>
                 </div>
             </div>
         </div>
