@@ -2,12 +2,13 @@ import { createIPFSClient, uploadIPFS } from "../../scripts/ipfs.js";
 import { getWallet } from "../../scripts/getWallet.js";
 import { getTrustedProject, getUser } from "../../scripts/trustedProject.js";
 import { CreatorSatisfiedEvent } from "./events.js";
+import { copyText } from "../../scripts/utils.js";
 
 
-function makeProgressDotActive(labelQuery){
+function makeProgressDotActive(labelQuery) {
     const dotContainer = document.querySelector(labelQuery).parentElement;
 
-    for(const element of dotContainer.children){
+    for (const element of dotContainer.children) {
         element.classList.add('active');
     }
 
@@ -51,7 +52,7 @@ async function updateTotalPayment(trustedProject) {
         element.innerHTML = `${ethers.formatEther(totalPayment)} ETH`;
     }
 
-    if(totalPayment == 0){
+    if (totalPayment > 0) {
         makeProgressDotActive(".diagramWaitPayment");
     }
 
@@ -62,18 +63,16 @@ async function releasePayment(trustedProject) {
     await transaction.wait();
 }
 
-async function updateProjectState(trustedProject) {    
+async function updateProjectState(trustedProject) {
     await updateTotalPayment(trustedProject);
 
-    const creator = getUser(await trustedProject.creator());
+    const creator = getUser(await trustedProject.creator(), await getWallet());
     const isCreatorSatisfied = await creator.isSatisfied();
 
     if (isCreatorSatisfied) {
         window.dispatchEvent(new CreatorSatisfiedEvent());
-        await getUploadedFiles(trustedProject);
     }
 }
-
 
 function createCreatorPage(trustedProject) {
 
@@ -124,8 +123,7 @@ function createCreatorPage(trustedProject) {
     });
 }
 
-
-function createCustomerPage(trustedProject){
+function createCustomerPage(trustedProject) {
     document.querySelector(".diagram_wait_payment").innerText = "Make the payment";
     document.querySelector(".diagram_upload_files").innerText = "Wait for the project";
     document.querySelector(".diagram_file_check").innerText = "Check the files";
@@ -139,6 +137,12 @@ function createCustomerPage(trustedProject){
 
     document.querySelector(".releasePayment").addEventListener('click', async () => {
         await releasePayment(trustedProject);
+    });
+
+    document.addEventListener((new CreatorSatisfiedEvent()).type, async () => {
+        document.querySelector("#customerPaymentRelease").style.display = "inherit";
+        document.querySelector("#customerPaymentUpload").style.display = "none";
+        await getUploadedFiles();
     });
 }
 
@@ -162,6 +166,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.replace("/");
     }
 
+    const creatorAddress = (await getUser(await trustedProject.creator(), signer).memberAddress()).slice(0, 9);
+    const customerAddress = (await getUser(await trustedProject.customer(), signer).memberAddress()).slice(0, 9);
+
+    document.querySelector(".creatorAddress").innerText = `${creatorAddress}...`;
+    document.querySelector(".customerAddress").innerText = `${customerAddress}...`;    
+
+    document.querySelector(".creatorAddress").addEventListener('click', copyText);
+    document.querySelector(".customerAddress").addEventListener('click', copyText);
+
+    document.querySelector('.share').addEventListener('click', async () => {
+        if (navigator.share) {
+            await navigator.share({
+                title: 'I want to share a Trusted Project with you!',
+                text: `You can easily pay me in Crypto using this Trusted Project. Address: ${address}`,
+                url: window.location.href,
+            });
+        }else{
+            alert("Please, update your browser. The functions that we are trying to use are not available.");
+        }
+    });
+
     const isCustomer = customer.toLowerCase() === signer.address.toLowerCase();
     setInterval(() => { updateProjectState(trustedProject); }, 3000);
 
@@ -172,10 +197,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         createCreatorPage(trustedProject);
         document.querySelector(".customerContainer").remove();
     }
-
-    document.addEventListener((new CreatorSatisfiedEvent()).type, () => {
-        document.querySelector("#customerPaymentRelease").style.display = "inherit";
-        document.querySelector("#customerPaymentUpload").style.display = "none";
-    });
 
 });

@@ -12,15 +12,26 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
-<body>
+<body style="overflow: hidden">
     <div class="main_title">
         <h1>Trust Project</h1>
         <span>Secure Crypto Payments for Goods and Services</span>
     </div>
 
-    <div class="mainRow" style="margin-top: 3em">
-        <div class="customerContainer">
-            <div id="customerPaymentUpload" class="centered_card card">
+    <div class="mainRow">
+        <div class="card projectInfoContainer">
+            <div class="subtitle" style="align-self: center;">Project info</div>
+
+            <div style="font-size: 1.1em">Creator: <span class="creatorAddress"></span></div>
+            <div style="font-size: 1.1em">Customer: <span class="customerAddress"></span></div>
+
+            <button style='margin-top: 1em' class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored share">
+                Share <i class="material-icons share-icon">share</i>
+            </button>
+        </div>
+
+        <div class="centered_card card customerContainer">
+            <div id="customerPaymentUpload">
                 <h5>Total Payment: <span class="total_payment">0 ETH</span></h5>
                 <span class="subtitle">Now, add the payment that you agreed upon.</span>
 
@@ -34,7 +45,7 @@
                     payment</button>
             </div>
 
-            <div id="customerPaymentRelease" class="card" style="display: none">
+            <div id="customerPaymentRelease" style="display: none">
                 <h5 style="text-align: center">Check the project files the customer uploaded</h5>
                 <div class="uploadedFiles"></div>
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored releasePayment">
@@ -44,7 +55,6 @@
         </div>
 
         <div class="centered_card card">
-            <h5></h5>
             <span class="subtitle" style="text-align: center;">
                 Now, wait for the customer to send the payment to the contract.
                 When the correct amount is there, you can upload your work.
@@ -148,12 +158,15 @@
         </div>
     </div>
 
+    <footer style="text-align: center;">
+        <div style="color: #33691E;">Beta preview</div>
+        <div>By using this site, you agree to our <a href="/customer_agreement" target="_blank">Customer Agreement</a>.</div>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.3.0/ethers.umd.min.js"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
     <script src="/pages/project/script.js" type="module"></script>
 </body>
-
-</html>
 
 </html>

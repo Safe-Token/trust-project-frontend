@@ -63,6 +63,7 @@
 
 .creatorContainer {
     filter: blur(8px);
+    transition: 200ms;
     pointer-events: none;
 }
 
@@ -73,17 +74,29 @@
 
 .mainRow {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-evenly;
+    align-items: stretch;
+    margin-top: 3em;
+    margin-left: 20%;
+    margin-right: 20%;
 }
 
+.mainRow > .card{
+    margin: 0;
+}
 
 .projectStateContainer {
-    position: absolute;
-    right: 10%;
     margin: 0 !important;
     display: flex;
     flex-direction: column;
+}
+
+.projectInfoContainer{
+    margin: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-items: stretch;
 }
 
 .diagram {

@@ -11,4 +11,8 @@ app.get('/project', function (request, response) {
     response.sendFile(__dirname + '/src/pages/project/index.html');
 });
 
+app.get('/customer_agreement', function(request, response) {
+    response.sendFile(__dirname + '/src/pages/customer_agreement.html');
+});
+
 app.listen(8080);

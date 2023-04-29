@@ -7,6 +7,6 @@ export function getTrustedProject(address, signer){
 }
 
 
-export function getUser(address){
-    return new ethers.Contract(address, UserData.abi);
+export function getUser(address, signer){
+    return new ethers.Contract(address, UserData.abi, signer);
 }
