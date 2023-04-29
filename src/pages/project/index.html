@@ -25,7 +25,8 @@
             <div style="font-size: 1.1em">Creator: <span class="creatorAddress"></span></div>
             <div style="font-size: 1.1em">Customer: <span class="customerAddress"></span></div>
 
-            <button style='margin-top: 1em' class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored share">
+            <button style='margin-top: 1em'
+                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored share">
                 Share <i class="material-icons share-icon">share</i>
             </button>
         </div>
@@ -160,13 +161,23 @@
 
     <footer style="text-align: center;">
         <div style="color: #33691E;">Beta preview</div>
-        <div>By using this site, you agree to our <a href="/customer_agreement" target="_blank">Customer Agreement</a>.</div>
+        <div>By using this site, you agree to our <a href="/customer_agreement" target="_blank">Customer Agreement</a>.
+        </div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.3.0/ethers.umd.min.js"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
     <script src="/pages/project/script.js" type="module"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-32MK2K3QK4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-32MK2K3QK4');
+    </script>
 </body>
 
 </html>
