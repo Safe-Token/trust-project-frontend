@@ -9,7 +9,7 @@
     <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 </head>
 
-<body style="overflow: hidden;">
+<body>
     <div class="main_title">
         <h1>Trust Project</h1>
         <span>Secure Crypto Payments for Goods and Services</span>
@@ -65,9 +65,28 @@
                 </div>
             </div>
 
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored create_button">Create
-                now!</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored create_button">Create now!</button>
         </form>
+
+        <div class="additional_parameters card">
+            <div class="subtitle">Arbitrage addresses</div>
+
+            <div style="text-align: center;">
+                Arbitrage wallets are only used if there is a dispute. Those are third-party validators that
+                do not have access to your payments, but can resolve disputes. We hope that they are not going to be
+                needed in most of the projects, but you still have to choose them carefully!
+            </div>
+
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored add_arbitrage_button">
+                <span class="material-icons">add</span> Add arbitrage
+            </button>
+        </div>
+
+        <div style="margin-top: 3em">
+            <button class="mdl-button mdl-js-button additional_parameters_button">
+                <i class="material-icons additional_parameters_icon">add</i> Additional parameters
+            </button>
+        </div>
 
         <div class="container_wallet">
             <span>Current ETH Wallet Address:</span>
@@ -80,7 +99,7 @@
         <div>By using this site, you agree to our <a href="/customer_agreement" target="_blank">Customer Agreement</a>.
         </div>
     </footer>
-
+  
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.3.0/ethers.umd.min.js"
         crossorigin="anonymous"></script>
     <script src="/pages/index/script.js" type="module"></script>

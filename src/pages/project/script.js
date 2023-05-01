@@ -1,8 +1,7 @@
 import { createIPFSClient, uploadIPFS } from "../../scripts/ipfs.js";
 import { getWallet } from "../../scripts/getWallet.js";
-import { getTrustedProject, getUser } from "../../scripts/trustedProject.js";
+import { getTrustedProject } from "../../scripts/trustedProject.js";
 import { CreatorSatisfiedEvent } from "./events.js";
-import { copyText } from "../../scripts/utils.js";
 
 
 function makeProgressDotActive(labelQuery) {
@@ -65,13 +64,17 @@ async function releasePayment(trustedProject) {
 
 async function updateProjectState(trustedProject) {
     await updateTotalPayment(trustedProject);
+    const projectStateFilter = trustedProject.filters.ProjectStateChanged();
 
-    const creator = getUser(await trustedProject.creator(), await getWallet());
-    const isCreatorSatisfied = await creator.isSatisfied();
+    trustedProject.queryFilter(projectStateFilter, 0, 'latest').then(events => {
+        console.log(events)
+    });
 
-    if (isCreatorSatisfied) {
-        window.dispatchEvent(new CreatorSatisfiedEvent());
-    }
+    trustedProject.on(projectStateFilter, (newState) => {
+        console.log(newState)
+    });
+
+    window.dispatchEvent(new CreatorSatisfiedEvent());
 }
 
 function createCreatorPage(trustedProject) {
@@ -124,10 +127,10 @@ function createCreatorPage(trustedProject) {
 }
 
 function createCustomerPage(trustedProject) {
-    document.querySelector(".diagram_wait_payment").innerText = "Make the payment";
-    document.querySelector(".diagram_upload_files").innerText = "Wait for the project";
-    document.querySelector(".diagram_file_check").innerText = "Check the files";
-    document.querySelector(".diagram_payment_release").innerText = "Release the payment";
+    document.querySelector(".diagramWaitPayment").innerText = "Make the payment";
+    document.querySelector(".diagramUploadFiles").innerText = "Wait for the project";
+    document.querySelector(".diagramFileCheck").innerText = "Check the files";
+    document.querySelector(".diagramPaymentRelease").innerText = "Release the payment";
 
     document.querySelector(".addPayment").addEventListener("click", async () => {
         const paymentValue = document.querySelector("#paymentAmount").value;
@@ -166,14 +169,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.location.replace("/");
     }
 
-    const creatorAddress = (await getUser(await trustedProject.creator(), signer).memberAddress()).slice(0, 9);
-    const customerAddress = (await getUser(await trustedProject.customer(), signer).memberAddress()).slice(0, 9);
-
-    document.querySelector(".creatorAddress").innerText = `${creatorAddress}...`;
-    document.querySelector(".customerAddress").innerText = `${customerAddress}...`;    
-
-    document.querySelector(".creatorAddress").addEventListener('click', copyText);
-    document.querySelector(".customerAddress").addEventListener('click', copyText);
+    document.querySelector(".creatorAddress").innerText = `${(await trustedProject.creator()).slice(0, 9)}...`;
+    document.querySelector(".customerAddress").innerText = `${(await trustedProject.customer()).slice(0, 9)}...`;
 
     document.querySelector('.share').addEventListener('click', async () => {
         if (navigator.share) {
@@ -182,20 +179,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 text: `You can easily pay me in Crypto using this Trusted Project. Address: ${address}`,
                 url: window.location.href,
             });
-        }else{
+        } else {
             alert("Please, update your browser. The functions that we are trying to use are not available.");
         }
     });
 
-    const isCustomer = customer.toLowerCase() === signer.address.toLowerCase();
-    setInterval(() => { updateProjectState(trustedProject); }, 3000);
-
-    if (isCustomer) {
+    if (customer.toLowerCase() === signer.address.toLowerCase()) {
+        document.querySelector(".creatorMainContainer").remove();
         createCustomerPage(trustedProject);
-        document.querySelector(".creatorContainer").remove();
     } else {
-        createCreatorPage(trustedProject);
         document.querySelector(".customerContainer").remove();
+        createCreatorPage(trustedProject);
     }
 
+    updateProjectState(trustedProject);
 });
